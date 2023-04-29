@@ -1,3 +1,6 @@
 {
-  "ServiceConnectionString": ""
+  "ServiceConnectionString": "",
+  "OpcClientConnectionString": "opc.tcp://localhost:4840/",
+  "Device1ConnectionString": "",
+  "Device2ConnectionString": ""
 }

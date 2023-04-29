@@ -1,11 +1,10 @@
-﻿
-
-using Microsoft.Azure.Devices.Common.Exceptions;
+﻿using Microsoft.Azure.Devices.Common.Exceptions;
 
 namespace ServiceSdkDemo.Console
 {
     internal static class FeatureSelector
     {
+
         public static void PrintMenu()
         {
             System.Console.WriteLine(@"
@@ -15,7 +14,7 @@ namespace ServiceSdkDemo.Console
 0 - Exit");
         }
 
-        public static async Task Execute(int feature, Lib.IoTHubManager manager) 
+        public static async Task Execute(int feature, IoTHubManager manager) 
         { 
             switch(feature)
             {
@@ -39,9 +38,9 @@ namespace ServiceSdkDemo.Console
                             var result = await manager.ExecuteDeviceMethod("SendMessages", deviceId);
                             System.Console.WriteLine($"Method executed with status {result}");
                         }
-                        catch(DeviceNotFoundException)
+                        catch(DeviceNotFoundException e)
                         {
-                            System.Console.WriteLine("Device not connected!");
+                            System.Console.WriteLine($"Device not connected! \n{e.Message}");
                         }
                     }
                     break;
