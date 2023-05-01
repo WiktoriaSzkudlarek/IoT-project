@@ -69,6 +69,11 @@ namespace ServiceSdkDemo.Console
             var temperature = client.ReadNode($"ns=2;s=Device {deviceNumber}/Temperature").Value;
             System.Console.WriteLine(temperature);
 
+            var deviceErrors = client.ReadNode($"ns=2;s=Device {deviceNumber}/DeviceErrors").Value;
+            System.Console.WriteLine(deviceErrors);
+            var productionRate = client.ReadNode($"ns=2;s=Device {deviceNumber}/ProductionRate").Value;
+            System.Console.WriteLine(productionRate);
+
             var telemetryData = JsonConvert.SerializeObject(new
             {
                 device = $"Device{deviceNumber}",
@@ -84,6 +89,9 @@ namespace ServiceSdkDemo.Console
             eventMessage.ContentEncoding = "utf-8";
 
             await deviceClient.SendEventAsync(eventMessage);
+
+            await UpdateTwinAsync("deviceErrors", DateTime.Now);
+            await UpdateTwinAsync("productionRate", DateTime.Now);
 
             client.Disconnect();
             await Task.Delay(1000);
@@ -194,12 +202,20 @@ namespace ServiceSdkDemo.Console
             System.Console.WriteLine($"\tDesired property change:\n\t {JsonConvert.SerializeObject(desiredProperties)}");
             System.Console.WriteLine("\tSending current time as reported property");
             var reportedProperties = new TwinCollection();
-            reportedProperties["DateTimeLastDesiredPropertyCHangeReceived"] = DateTime.Now;
+            reportedProperties["ProductionRate"] = desiredProperties["ProductionRate"];
+
+            var client = new OpcClient(opcClient);
+            client.Connect();
+
+            int ProductionRateChanged = desiredProperties["ProductionRate"];
+            System.Console.WriteLine(ProductionRateChanged);
+            client.WriteNode($"ns=2;s=Device {deviceNumber}/ProductionRate", ProductionRateChanged);
+
+            client.Disconnect();
 
             await deviceClient.UpdateReportedPropertiesAsync(reportedProperties);
         }
         //
-
         #endregion
 
         public async Task InitializeHandlers()
