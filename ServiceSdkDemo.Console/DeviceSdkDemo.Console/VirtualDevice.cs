@@ -108,8 +108,8 @@ namespace ServiceSdkDemo.Console
             }
 
 
-            //await UpdateTwinAsync("deviceErrors", DateTime.Now);
-            //await UpdateTwinAsync("productionRate", DateTime.Now);
+            await UpdateTwinAsync("deviceErrors", DateTime.Now);
+            await UpdateTwinAsync("productionRate", DateTime.Now);
 
             client.Disconnect();
             await Task.Delay(1000);

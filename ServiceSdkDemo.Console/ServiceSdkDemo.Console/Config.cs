@@ -10,7 +10,11 @@ namespace ServiceSdkDemo.Lib
     {
         public string ServiceConnectionString { get; set; }
         public string OpcClientConnectionString {  get; set; }
-        public string Device1ConnectionString {  get; set; }
-        public string Device2ConnectionString {  get; set; }
+        public Device[] Devices { get; set; }
+    }
+    public class Device
+    {
+        public string DeviceId { get; set; }
+        public string ConnectionString { get; set; }
     }
 }

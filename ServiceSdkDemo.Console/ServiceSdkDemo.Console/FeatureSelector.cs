@@ -35,7 +35,7 @@ namespace ServiceSdkDemo.Console
                         string deviceId = System.Console.ReadLine() ?? string.Empty;
                         try
                         {
-                            var result = await manager.ExecuteDeviceMethod("SendMessages", deviceId);
+                            var result = await manager.ExecuteDeviceMethod("SendTelemetry", deviceId);
                             System.Console.WriteLine($"Method executed with status {result}");
                         }
                         catch(DeviceNotFoundException e)

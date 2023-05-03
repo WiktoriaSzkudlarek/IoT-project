@@ -27,7 +27,7 @@ namespace ServiceSdkDemo.Console
         public async Task<int> ExecuteDeviceMethod(string methodName, string deviceId)
         {
             var method = new CloudToDeviceMethod(methodName);
-            var methodBody = new { nrOfMessages = 5, delay = 500 };
+            var methodBody = new { }; //to
             method.SetPayloadJson(JsonConvert.SerializeObject(methodBody));
 
             var result = await client.InvokeDeviceMethodAsync(deviceId, method);
