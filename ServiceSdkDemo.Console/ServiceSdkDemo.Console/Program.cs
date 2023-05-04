@@ -46,7 +46,7 @@ string opcClientConnectionString = config.OpcClientConnectionString;
 
 List<VirtualDevice> deviceClients = new List<VirtualDevice>();
 List<int> deviceProcesses = new List<int>();
-foreach(var device in config.Devices)
+foreach (var device in config.Devices)
 {
     VirtualDevice? virtualDevice = null;
     try
@@ -70,7 +70,7 @@ foreach(var device in config.Devices)
     }
     finally
     {
-        if(virtualDevice != null)
+        if (virtualDevice != null)
             deviceClients.Add(virtualDevice);
     }
 }
@@ -92,4 +92,3 @@ Console.WriteLine("\nHub and Devices are terminated now. Press enter to close th
 
 
 Console.ReadLine();
-

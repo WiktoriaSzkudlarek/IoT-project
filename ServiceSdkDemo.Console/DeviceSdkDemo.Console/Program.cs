@@ -30,8 +30,6 @@ namespace ServiceSdkDemo.Console
             {
                 System.Console.WriteLine("Number of arguments is not equal 3");
             }
-
-            
         }
     }
 }
