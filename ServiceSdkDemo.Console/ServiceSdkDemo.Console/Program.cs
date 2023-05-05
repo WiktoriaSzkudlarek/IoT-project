@@ -18,15 +18,34 @@ RegistryManager? registryManager = null;
 
 IoTHubManager? manager = null;
 
-string projectPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+List<VirtualDevice> deviceClients = new List<VirtualDevice>();
+
+string projectPath = "";
+string opcClientConnectionString = "";
+
 try
 {
     string text = File.ReadAllText("config.json");
     config = JsonSerializer.Deserialize<Config>(text);
+    opcClientConnectionString = config.OpcClientConnectionString;
 }
 catch
 {
-    Console.WriteLine("There was a problem while reading config file.");
+    Console.WriteLine("There was a problem while reading config file.\nPress any key to close the program...");
+    CloseStartedProcesses();
+    Console.ReadLine();
+    Environment.Exit(1);
+}
+try
+{
+    projectPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+}
+catch
+{
+    Console.WriteLine("The device.exe probably doesn't exist.\nPress any key to close the program...");
+    CloseStartedProcesses();
+    Console.ReadLine();
+    Environment.Exit(1);
 }
 try
 {
@@ -38,21 +57,18 @@ try
 catch
 {
     Console.WriteLine("There was a problem while connecting to the Azure platform.\nPress any key to close the program...");
+    CloseStartedProcesses();
     Console.ReadLine();
     Environment.Exit(1);
 }
 
-string opcClientConnectionString = config.OpcClientConnectionString;
-
-List<VirtualDevice> deviceClients = new List<VirtualDevice>();
-List<int> deviceProcesses = new List<int>();
 foreach (var device in config.Devices)
 {
     VirtualDevice? virtualDevice = null;
     try
     {
         string deviceExePath = $"{projectPath}\\DeviceSdkDemo.Console\\bin\\Debug\\net6.0\\DeviceSdkDemo.Console.exe";
-        string procArgs = $"{device.ConnectionString} {device.DeviceId} {opcClientConnectionString}";
+        string procArgs = $"{device.ConnectionString} {device.DeviceId} {opcClientConnectionString} {Process.GetCurrentProcess().ProcessName}";
 
         using Process process = new();
         process.StartInfo.FileName = deviceExePath;
@@ -60,11 +76,11 @@ foreach (var device in config.Devices)
         process.StartInfo.UseShellExecute = true;
         process.Start();
 
-        deviceProcesses.Add(process.Id);
     }
     catch
     {
         Console.WriteLine($"Could not connect to: Device{device.DeviceId}\nPress any key to close the program...");
+        CloseStartedProcesses();
         Console.ReadLine();
         Environment.Exit(1);
     }
@@ -83,12 +99,19 @@ do
     await FeatureSelector.Execute(input, manager);
 } while (input != 0);
 
-foreach (var pid in deviceProcesses)
-{
-    Process proc = Process.GetProcessById(pid);
-    proc.Kill();
-}
+CloseStartedProcesses();
 Console.WriteLine("\nHub and Devices are terminated now. Press enter to close the program...");
-
-
 Console.ReadLine();
+
+///
+void CloseStartedProcesses()
+{
+    Process[] workers = Process.GetProcessesByName("DeviceSdkDemo.Console");
+    foreach (Process worker in workers)
+    {
+        worker.Kill();
+        worker.WaitForExit();
+        worker.Dispose();
+    }
+}
+

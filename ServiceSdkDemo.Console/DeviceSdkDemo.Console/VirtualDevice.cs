@@ -42,20 +42,13 @@ namespace ServiceSdkDemo.Console
             client.Connect();
 
             var ProductionStatus = client.ReadNode($"ns=2;s=Device {deviceNumber}/ProductionStatus").Value;
-            //System.Console.WriteLine(productionStatus);
             var WorkorderId = client.ReadNode($"ns=2;s=Device {deviceNumber}/WorkorderId").Value;
-            //System.Console.WriteLine(workorderId);
             var GoodCount = client.ReadNode($"ns=2;s=Device {deviceNumber}/GoodCount").Value;
-            //System.Console.WriteLine(goodCount);
             var BadCount = client.ReadNode($"ns=2;s=Device {deviceNumber}/BadCount").Value;
-            //System.Console.WriteLine(badCount);
             var Temperature = client.ReadNode($"ns=2;s=Device {deviceNumber}/Temperature").Value;
-            //System.Console.WriteLine(temperature);
 
             var DeviceErrors = client.ReadNode($"ns=2;s=Device {deviceNumber}/DeviceErrors").Value;
-            //System.Console.WriteLine(deviceErrors);
             var ProductionRate = client.ReadNode($"ns=2;s=Device {deviceNumber}/ProductionRate").Value;
-            //System.Console.WriteLine(productionRate);
 
             var data = new
             {
@@ -87,10 +80,7 @@ namespace ServiceSdkDemo.Console
                 System.Console.WriteLine($"Exception while sending event: {ex.Message}");
             }
 
-            //System.Console.WriteLine($"Device errors: {(deviceErrorsEnum)(int)deviceErrors}");
-
-            await UpdateTwinAsync("deviceErrors", DeviceErrors);
-            await UpdateTwinAsync("productionRate", ProductionRate);
+            //await CheckTwinAsync(DeviceErrors, ProductionRate);
 
             client.Disconnect();
             await Task.Delay(1000);
@@ -213,19 +203,39 @@ namespace ServiceSdkDemo.Console
         #endregion
 
         #region Device Twin
-        public async Task UpdateTwinAsync(string valueString, object value)
+        public async Task CheckTwinAsync(int deviceErrors, int productionRate)
         {
             var twin = await deviceClient.GetTwinAsync();
 
-            var reportedProperties = new TwinCollection();
-            var oldReportedProperty = twin.Properties.Reported[valueString];
+            var twinProductionRate = twin.Properties.Reported["productionRate"];
 
-            if (oldReportedProperty.Equals(value))
+            string newDeviceErrors = ((deviceErrorsEnum)deviceErrors).ToString();
+
+            if (!twinProductionRate.Equals(productionRate) || twin.Properties.Reported["deviceErrors"] != newDeviceErrors)
             {
-                reportedProperties[valueString] = value;
-
-                await deviceClient.UpdateReportedPropertiesAsync(reportedProperties);
+                System.Console.WriteLine($"\tInvoking Twin on Device{deviceNumber}.");
+                await UpdateTwinAsync(newDeviceErrors, productionRate);
             }
+            else
+            {
+                System.Console.WriteLine($"\tDevice{deviceNumber} is actual.");
+
+            }
+            await Task.Delay(1000);
+        }
+        public async Task UpdateTwinAsync(string deviceErrors, int productionRate)
+        {
+            var reportedProperties = new TwinCollection();
+
+            reportedProperties["productionRate"] = productionRate;
+
+            if (deviceErrors != "None")
+            {
+                reportedProperties["deviceErrors"] = deviceErrors;
+                reportedProperties["lastDeviceErrorsDate"] = DateTime.Today;
+            }
+
+            await deviceClient.UpdateReportedPropertiesAsync(reportedProperties);
         }
 
         private async Task onDesiredPropertyChanged(TwinCollection desiredProperties, object _)
