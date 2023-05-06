@@ -36,6 +36,7 @@ catch
     Console.ReadLine();
     Environment.Exit(1);
 }
+
 try
 {
     projectPath = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
@@ -47,6 +48,7 @@ catch
     Console.ReadLine();
     Environment.Exit(1);
 }
+
 try
 {
     serviceClient = ServiceClient.CreateFromConnectionString(config.ServiceConnectionString);
@@ -61,6 +63,7 @@ catch
     Console.ReadLine();
     Environment.Exit(1);
 }
+
 
 foreach (var device in config.Devices)
 {
@@ -90,6 +93,7 @@ foreach (var device in config.Devices)
             deviceClients.Add(virtualDevice);
     }
 }
+
 
 int input;
 do

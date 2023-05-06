@@ -95,10 +95,12 @@ namespace ServiceSdkDemo.Console
         #region Receive Messages
         private async Task OnC2dMessageReceivedAsync(Message receivedMessage, object _)
         {
+            System.Console.ForegroundColor = ConsoleColor.DarkCyan;
             System.Console.WriteLine($"\t{DateTime.Now}> C2D message callback - message received with Id={receivedMessage.MessageId}");
             PrintMessage(receivedMessage);
             await deviceClient.CompleteAsync(receivedMessage);
             System.Console.WriteLine($"\t{DateTime.Now}> Completed C2D message with Id={receivedMessage.MessageId}.");
+            System.Console.ResetColor();
 
             receivedMessage.Dispose();
         }
@@ -106,6 +108,8 @@ namespace ServiceSdkDemo.Console
         private void PrintMessage(Message receivedMessage)
         {
             string messageData = Encoding.ASCII.GetString(receivedMessage.GetBytes());
+            
+            System.Console.ForegroundColor = ConsoleColor.DarkCyan;
             System.Console.WriteLine($"\t\tReceived message: {messageData}");
 
             int propCount = 0;
@@ -113,6 +117,8 @@ namespace ServiceSdkDemo.Console
             {
                 System.Console.WriteLine($"\t\tProperty[{propCount++}> Key={prop.Key} : Value={prop.Value}]");
             }
+            System.Console.ResetColor();
+
         }
         #endregion
 
@@ -130,7 +136,7 @@ namespace ServiceSdkDemo.Console
         // Send Telemetry
         private async Task<MethodResponse> SendTelemetryHandler(MethodRequest methodRequest, object userContext)
         {
-            System.Console.WriteLine($"\tMETHOD EXECUTED: {methodRequest.Name}");
+            System.Console.WriteLine($"\tEXECUTED METHOD: {methodRequest.Name}");
 
             var payload = JsonConvert.DeserializeAnonymousType(methodRequest.DataAsJson, new { machineId = default(string) });
             await SendTelemetry();
@@ -228,14 +234,19 @@ namespace ServiceSdkDemo.Console
 
             if (!twinProductionRate.Equals(productionRate) || twinDeviceErrors != DeviceErrorsString)
             {
+                System.Console.ForegroundColor = ConsoleColor.DarkYellow;
                 System.Console.WriteLine($"\tInvoking Twin on Device{deviceNumber}.");
+                System.Console.ResetColor();
+
                 await UpdateTwinAsync(DeviceErrorsString, productionRate);
             }
             else
             {
+                System.Console.ForegroundColor = ConsoleColor.DarkYellow;
                 System.Console.WriteLine($"\tDevice{deviceNumber} is actual.");
-
+                System.Console.ResetColor();
             }
+
             await Task.Delay(1000);
         }
         public async Task UpdateTwinAsync(string deviceErrors, int productionRate)

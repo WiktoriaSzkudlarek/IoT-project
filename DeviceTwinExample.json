@@ -1,0 +1,46 @@
+{
+    "deviceId": "Device1",
+    "etag": "AAAAAAAAAAE=",
+    "deviceEtag": "Mzg5Mzg2ODcz",
+    "status": "enabled",
+    "statusUpdateTime": "0001-01-01T00:00:00Z",
+    "connectionState": "Disconnected",
+    "lastActivityTime": "2023-05-06T13:21:38.8755595Z",
+    "cloudToDeviceMessageCount": 0,
+    "authenticationType": "sas",
+    "x509Thumbprint": {
+        "primaryThumbprint": null,
+        "secondaryThumbprint": null
+    },
+    "modelId": "",
+    "version": 14,
+    "properties": {
+        "desired": {
+            "$metadata": {
+                "$lastUpdated": "2023-05-06T08:21:13.923281Z"
+            },
+            "$version": 1
+        },
+        "reported": {
+            "productionRate": 20,
+            "deviceErrors": "None",
+            "lastDeviceErrorsDate": "2023-05-06T00:00:00+02:00",
+            "$metadata": {
+                "$lastUpdated": "2023-05-06T13:21:29.5156727Z",
+                "productionRate": {
+                    "$lastUpdated": "2023-05-06T13:21:29.5156727Z"
+                },
+                "deviceErrors": {
+                    "$lastUpdated": "2023-05-06T13:21:29.5156727Z"
+                },
+                "lastDeviceErrorsDate": {
+                    "$lastUpdated": "2023-05-06T09:39:54.80008Z"
+                }
+            },
+            "$version": 13
+        }
+    },
+    "capabilities": {
+        "iotEdge": false
+    }
+}

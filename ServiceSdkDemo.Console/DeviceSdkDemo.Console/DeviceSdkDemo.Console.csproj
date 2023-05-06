@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.8.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
     <PackageReference Include="Microsoft.Azure.Devices" Version="1.38.2" />
     <PackageReference Include="Microsoft.Azure.Devices.Client" Version="1.41.3" />
     <PackageReference Include="Opc.UaFx.Client" Version="2.30.0" />
