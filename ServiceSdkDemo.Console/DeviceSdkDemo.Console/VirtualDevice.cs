@@ -47,7 +47,7 @@ namespace ServiceSdkDemo.Console
             var BadCount = client.ReadNode($"ns=2;s=Device {deviceNumber}/BadCount").Value;
             var Temperature = client.ReadNode($"ns=2;s=Device {deviceNumber}/Temperature").Value;
 
-            var DeviceErrors = client.ReadNode($"ns=2;s=Device {deviceNumber}/DeviceErrors").Value;
+            var DeviceErrors = client.ReadNode($"ns=2;s=Device {deviceNumber}/DeviceError").Value;
             var ProductionRate = client.ReadNode($"ns=2;s=Device {deviceNumber}/ProductionRate").Value;
 
             var data = new
@@ -80,7 +80,12 @@ namespace ServiceSdkDemo.Console
                 System.Console.WriteLine($"Exception while sending event: {ex.Message}");
             }
 
-            //await CheckTwinAsync(DeviceErrors, ProductionRate);
+            int deviceErrorsInt = Convert.ToInt32(DeviceErrors);
+            int productionRateInt = Convert.ToInt32(ProductionRate);
+                
+            await CheckTwinAsync(deviceErrorsInt, productionRateInt);
+
+            
 
             client.Disconnect();
             await Task.Delay(1000);
@@ -205,16 +210,26 @@ namespace ServiceSdkDemo.Console
         #region Device Twin
         public async Task CheckTwinAsync(int deviceErrors, int productionRate)
         {
+            string DeviceErrorsString = ((deviceErrorsEnum)deviceErrors).ToString();
+            
             var twin = await deviceClient.GetTwinAsync();
 
-            var twinProductionRate = twin.Properties.Reported["productionRate"];
+            int twinProductionRate = productionRate;
+            string twinDeviceErrors = DeviceErrorsString;
+            try
+            {
+                twinProductionRate = twin.Properties.Reported["productionRate"];
+                twinDeviceErrors = twin.Properties.Reported["deviceErrors"];
+            }
+            catch
+            {
+                await UpdateTwinAsync(DeviceErrorsString, productionRate);
+            }
 
-            string newDeviceErrors = ((deviceErrorsEnum)deviceErrors).ToString();
-
-            if (!twinProductionRate.Equals(productionRate) || twin.Properties.Reported["deviceErrors"] != newDeviceErrors)
+            if (!twinProductionRate.Equals(productionRate) || twinDeviceErrors != DeviceErrorsString)
             {
                 System.Console.WriteLine($"\tInvoking Twin on Device{deviceNumber}.");
-                await UpdateTwinAsync(newDeviceErrors, productionRate);
+                await UpdateTwinAsync(DeviceErrorsString, productionRate);
             }
             else
             {
@@ -233,6 +248,10 @@ namespace ServiceSdkDemo.Console
             {
                 reportedProperties["deviceErrors"] = deviceErrors;
                 reportedProperties["lastDeviceErrorsDate"] = DateTime.Today;
+            }
+            else
+            {
+                reportedProperties["deviceErrors"] = deviceErrors;
             }
 
             await deviceClient.UpdateReportedPropertiesAsync(reportedProperties);

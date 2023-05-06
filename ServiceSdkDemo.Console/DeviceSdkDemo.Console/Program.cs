@@ -20,7 +20,7 @@ namespace ServiceSdkDemo.Console
 
                 System.Console.Title = $"Device{deviceId}";
 
-
+                
                 using var deviceClient = DeviceClient.CreateFromConnectionString(deviceConnectionString, Microsoft.Azure.Devices.Client.TransportType.Mqtt);
                 await deviceClient.OpenAsync();
 
@@ -28,13 +28,13 @@ namespace ServiceSdkDemo.Console
                 System.Console.WriteLine("Connection success");
                 await device.InitializeHandlers();
 
-
+                
                 var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
                 while (await timer.WaitForNextTickAsync())
                 {
                     if (Process.GetProcessesByName(mainProcessName).Length == 0)
                         Environment.Exit(1);
-
+                    
                     try
                     {
                         System.Console.WriteLine(DateTime.Now);
@@ -42,12 +42,12 @@ namespace ServiceSdkDemo.Console
                     }
                     catch
                     {
-                        System.Console.WriteLine("Cannot send Telemetry data.\nPress enter to close the program...");
+                        System.Console.WriteLine("Cannot send Telemetry data.\nPress any enter to close the program...");
                         System.Console.ReadLine();
                         Environment.Exit(1);
                     }
                 }
-
+                
 
                 System.Console.WriteLine("Finished! Press key to close...");
                 System.Console.ReadLine();
