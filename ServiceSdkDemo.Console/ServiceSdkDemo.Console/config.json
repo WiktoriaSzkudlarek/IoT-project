@@ -1,6 +1,7 @@
 {
   "ServiceConnectionString": "",
   "OpcClientConnectionString": "opc.tcp://localhost:4840/",
+  "StorageConnectionString": "",
   "Devices": [
     {
       "DeviceId": "1",

@@ -5,7 +5,12 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceSdkDemo.Console", "ServiceSdkDemo.Console\ServiceSdkDemo.Console.csproj", "{CB077432-6C3A-4137-9122-64B0728341EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceSdkDemo.Console", "DeviceSdkDemo.Console\DeviceSdkDemo.Console.csproj", "{512B7D57-2193-44AA-BE8B-3DA03FC1064F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeviceSdkDemo.Console", "DeviceSdkDemo.Console\DeviceSdkDemo.Console.csproj", "{512B7D57-2193-44AA-BE8B-3DA03FC1064F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlobStorageDemo.Desktop", "BlobStorageDemo.Desktop\BlobStorageDemo.Desktop.csproj", "{6E6C2252-EE64-4205-AE77-EF7FBFD2FAAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CB077432-6C3A-4137-9122-64B0728341EA} = {CB077432-6C3A-4137-9122-64B0728341EA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{512B7D57-2193-44AA-BE8B-3DA03FC1064F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{512B7D57-2193-44AA-BE8B-3DA03FC1064F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{512B7D57-2193-44AA-BE8B-3DA03FC1064F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E6C2252-EE64-4205-AE77-EF7FBFD2FAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E6C2252-EE64-4205-AE77-EF7FBFD2FAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E6C2252-EE64-4205-AE77-EF7FBFD2FAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E6C2252-EE64-4205-AE77-EF7FBFD2FAAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

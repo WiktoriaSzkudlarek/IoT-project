@@ -1,6 +1,5 @@
 ﻿using Microsoft.Azure.Devices;
 using ServiceSdkDemo.Console;
-using ServiceSdkDemo.Lib;
 using System;
 using System.IO;
 using System.Text.Json;

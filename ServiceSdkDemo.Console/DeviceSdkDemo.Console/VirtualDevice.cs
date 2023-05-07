@@ -6,6 +6,7 @@ using System.Text;
 using Opc.UaFx;
 using Opc.UaFx.Client;
 using Microsoft.Azure.Amqp.Framing;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 
 namespace ServiceSdkDemo.Console
@@ -123,7 +124,6 @@ namespace ServiceSdkDemo.Console
         #endregion
 
         #region Direct Methods
-
         private async Task<MethodResponse> DefaultServiceHandler(MethodRequest methodRequest, object userContext)
         {
             System.Console.WriteLine($"\tMETHOD EXECUTED: {methodRequest.Name}");
@@ -247,22 +247,46 @@ namespace ServiceSdkDemo.Console
                 System.Console.ResetColor();
             }
 
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
         }
-        public async Task UpdateTwinAsync(string deviceErrors, int productionRate)
+        public async Task UpdateTwinAsync(string deviceError, int productionRate)
         {
             var reportedProperties = new TwinCollection();
 
             reportedProperties["productionRate"] = productionRate;
 
-            if (deviceErrors != "None")
+            if (deviceError != "None")
             {
-                reportedProperties["deviceErrors"] = deviceErrors;
+                reportedProperties["deviceErrors"] = deviceError;
                 reportedProperties["lastDeviceErrorsDate"] = DateTime.Today;
+                    var data = new
+                    {
+                        device = $"Device{deviceNumber}",
+                        deviceErrors = deviceError,
+                    };
+                    var dataString = JsonConvert.SerializeObject(data);
+
+                    Message eventMessage = new Message(Encoding.UTF8.GetBytes(dataString));
+                    eventMessage.ContentType = MediaTypeNames.Application.Json;
+                    eventMessage.ContentEncoding = "utf-8";
+
+                    System.Console.WriteLine($"\t{DateTime.Now.ToLocalTime()}> Sending updated device errors data: [{dataString}]");
+
+                    try
+                    {
+                        if (deviceClient != null)
+                        {
+                            await deviceClient.SendEventAsync(eventMessage);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Console.WriteLine($"Exception while sending event: {ex.Message}");
+                    }
             }
             else
             {
-                reportedProperties["deviceErrors"] = deviceErrors;
+                reportedProperties["deviceErrors"] = deviceError;
             }
 
             await deviceClient.UpdateReportedPropertiesAsync(reportedProperties);
@@ -303,6 +327,7 @@ namespace ServiceSdkDemo.Console
             await deviceClient.SetMethodHandlerAsync("EmergencyStop", EmergencyStopHandler, deviceClient);
             await deviceClient.SetMethodHandlerAsync("ResetErrorStatus", ResetErrorStatusHandler, deviceClient);
             await deviceClient.SetMethodHandlerAsync("ReduceProductionRate", ReduceProductionRateHandler, deviceClient);
+            
 
             await deviceClient.SetDesiredPropertyUpdateCallbackAsync(onDesiredPropertyChanged, deviceClient);
         }
