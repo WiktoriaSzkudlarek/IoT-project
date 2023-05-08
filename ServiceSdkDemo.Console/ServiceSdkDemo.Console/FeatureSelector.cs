@@ -96,7 +96,7 @@ namespace ServiceSdkDemo.Console
                     break;
                     case 4:
                     {
-                        BusinessLogic(manager);
+                        await BusinessLogic(manager);
                     }
                     break;
                 default:
@@ -126,8 +126,6 @@ namespace ServiceSdkDemo.Console
             string path = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
             try
             {
-                
-
                 string line = File.ReadLines($"{path}\\Blobs\\{blobs[0].BlobName}").First();
                 productionKpi = JsonSerializer.Deserialize<ProductionKPI>(line);
                 if( productionKpi.Kpi < 90.0)
@@ -135,7 +133,7 @@ namespace ServiceSdkDemo.Console
                     try
                     {
                         var result = await manager.ExecuteDeviceMethod(blobs[0].Method, productionKpi.Device);
-                        System.Console.WriteLine($"Method {blobs[0].Method} executed with status {result}");
+                        System.Console.WriteLine($"\nMethod {blobs[0].Method} executed with status {result}");
                     }
                     catch (DeviceNotFoundException e)
                     {
@@ -150,11 +148,11 @@ namespace ServiceSdkDemo.Console
                     try
                     {
                         var result = await manager.ExecuteDeviceMethod(blobs[1].Method, deviceErrors.Device);
-                        System.Console.WriteLine($"\nMethod: {blobs[1].Method} executed with status {result}");
+                        System.Console.WriteLine($"Method: {blobs[1].Method} executed with status {result}");
                     }
                     catch (DeviceNotFoundException e)
                     {
-                        System.Console.WriteLine($"Device not connected! \n{e.Message}");
+                        System.Console.WriteLine($"\nDevice not connected! \n{e.Message}");
                     }
                 }
             }
@@ -163,7 +161,6 @@ namespace ServiceSdkDemo.Console
                 System.Console.WriteLine(ex);
                 System.Console.WriteLine("There was a problem while reading blob files.\nPress any key to close the program...");
             }
-            PrintMenu();
         }
     }
 }
