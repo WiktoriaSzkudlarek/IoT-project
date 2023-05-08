@@ -11,5 +11,16 @@
       "DeviceId": "2",
       "ConnectionString": ""
     }
+  ],
+  "Blobs": [
+    {
+      "BlobName": "production-kpi.json",
+      "Method": "ReduceProductionRate"
+    },
+    {
+      "BlobName": "device-errors.json",
+      "Method": "EmergencyStop"
+    }
   ]
 }
+

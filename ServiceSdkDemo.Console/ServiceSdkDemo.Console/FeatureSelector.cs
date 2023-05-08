@@ -115,18 +115,27 @@ namespace ServiceSdkDemo.Console
         {
             ProductionKPI? productionKpi = null;
             DeviceErrors? deviceErrors = null;
-            string path = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+            Config config = JsonSerializer.Deserialize<Config>(File.ReadAllText("config.json"));
 
+            List<Blob> blobs = new List<Blob>();
+            foreach(var blob in config.Blobs)
+            {
+                blobs.Add(blob);
+            }
+
+            string path = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
             try
             {
-                string line = File.ReadLines($"{path}\\Blobs\\production-kpi.json").First();
+                
+
+                string line = File.ReadLines($"{path}\\Blobs\\{blobs[0].BlobName}").First();
                 productionKpi = JsonSerializer.Deserialize<ProductionKPI>(line);
                 if( productionKpi.Kpi < 90.0)
                 {
                     try
                     {
-                        var result = await manager.ExecuteDeviceMethod("ReduceProductionRate", productionKpi.Device);
-                        System.Console.WriteLine($"Method executed with status {result}");
+                        var result = await manager.ExecuteDeviceMethod(blobs[0].Method, productionKpi.Device);
+                        System.Console.WriteLine($"Method {blobs[0].Method} executed with status {result}");
                     }
                     catch (DeviceNotFoundException e)
                     {
@@ -134,14 +143,14 @@ namespace ServiceSdkDemo.Console
                     }
                 }
 
-                line = File.ReadLines($"{path}\\Blobs\\device-errors.json").First();
+                line = File.ReadLines($"{path}\\Blobs\\{blobs[1].BlobName}").First();
                 deviceErrors = JsonSerializer.Deserialize<DeviceErrors>(line);
                 if (deviceErrors.Count > 3)
                 {
                     try
                     {
-                        var result = await manager.ExecuteDeviceMethod("EmergencyStop",deviceErrors.Device);
-                        System.Console.WriteLine($"Method executed with status {result}");
+                        var result = await manager.ExecuteDeviceMethod(blobs[1].Method, deviceErrors.Device);
+                        System.Console.WriteLine($"\nMethod: {blobs[1].Method} executed with status {result}");
                     }
                     catch (DeviceNotFoundException e)
                     {

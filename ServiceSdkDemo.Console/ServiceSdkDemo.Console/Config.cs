@@ -13,11 +13,18 @@ namespace ServiceSdkDemo.Console
         public string StorageConnectionString {  get; set; }
         
         public Device[] Devices { get; set; }
+
+        public Blob[] Blobs { get; set; }
     }
     public class Device
     {
         public string DeviceId { get; set; }
         public string ConnectionString { get; set; }
+    }
+    public class Blob
+    {
+        public string BlobName { get; set; }
+        public string Method { get; set; }
     }
 
     //
