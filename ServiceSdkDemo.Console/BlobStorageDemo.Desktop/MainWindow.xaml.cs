@@ -129,6 +129,11 @@ namespace BlobStorageDemo.Desktop
             var blobClient = containerClient.GetBlobClient(selectedBlob);
 
             var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = $"{selectedContainer}.json";
+            var path = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName;
+            saveFileDialog.InitialDirectory = $"{path}\\Blobs";
+            saveFileDialog.RestoreDirectory = true;
+            Console.WriteLine(path);
             if (saveFileDialog.ShowDialog() != true)
             {
                 return;

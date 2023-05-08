@@ -136,7 +136,6 @@ namespace ServiceSdkDemo.Console
 
                 line = File.ReadLines($"{path}\\Blobs\\device-errors.json").First();
                 deviceErrors = JsonSerializer.Deserialize<DeviceErrors>(line);
-                System.Console.WriteLine($"=={deviceErrors}");
                 if (deviceErrors.Count > 3)
                 {
                     try
