@@ -1,35 +1,52 @@
 telemetry:
-	SELECT
-	    *
-	INTO
-	    [telemetry]
-	FROM 
-	    [iot];
-
-	{"device":"Device2","productionStatus":1,"workorderId":"68f0e279-105c-433f-8192-3ef21ae6fad0","goodCount":167,"badCount":21,"temperature":80.01053996440729,"EventProcessedUtcTime":"2023-05-06T18:43:48.7101862Z","PartitionId":1,"EventEnqueuedUtcTime":"2023-05-06T18:43:48.5050000Z","IoTHub":{"MessageId":null,"CorrelationId":null,"ConnectionDeviceId":"Device2","ConnectionDeviceGenerationId":"638189580819389681","EnqueuedTime":"2023-05-06T18:43:47.8760000Z"}}
-
-
+  SELECT
+      *
+  INTO
+      [telemetry]
+  FROM 
+      [iot];
+  {"device":"Device2","productionStatus":1,"workorderId":"68f0e279-105c-433f-8192-3ef21ae6fad0","goodCount":167,"badCount":21,"temperature":80.01053996440729,"EventProcessedUtcTime":"2023-05-06T18:43:48.7101862Z","PartitionId":1,"EventEnqueuedUtcTime":"2023-05-06T18:43:48.5050000Z","IoTHub":{"MessageId":null,"CorrelationId":null,"ConnectionDeviceId":"Device2","ConnectionDeviceGenerationId":"638189580819389681","EnqueuedTime":"2023-05-06T18:43:47.8760000Z"}}
+    
+    
 temperature-avg-min-max:
-	SELECT
-	    device, (( SUM(goodCount) / (SUM(goodCount) + SUM(badCount))) * 100) AS kpi
-	INTO
-	    [production-kpi]
-	FROM
-	    [iot]
-	GROUP BY
-	    device, TumblingWindow(minute, 5);
+  SELECT
+      device, AVG(temperature) AS temperatureAvg, MIN(temperature) AS temperatureMin, MAX(temperature) AS temperatureMax
+  INTO
+      [temperature-avg-min-max]
+  FROM
+      [iot]
+  WHERE
+      device IS NOT NULL
+  GROUP BY
+      device, TumblingWindow(minute, 5);
 
-	{"device":"Device1","temperatureAvg":66.17696002792184,"temperatureMin":60.725161868985126,"temperatureMax":74.47568410767582}
+  {"device":"Device1","temperatureAvg":66.17696002792184,"temperatureMin":60.725161868985126,"temperatureMax":74.47568410767582}
 
 
 production-kpi:
-	SELECT
-	    device, AVG(temperature) AS temperatureAvg, MIN(temperature) AS temperatureMin, MAX(temperature) AS temperatureMax
-	INTO
-	    [temperature-avg-min-max]
-	FROM
-	    [iot]
-	GROUP BY
-	    device, TumblingWindow(minute, 5);
+  SELECT
+    device AS Device, (( SUM(goodCount) / (SUM(goodCount) + SUM(badCount))) * 100) AS Kpi
+  INTO
+      [production-kpi]
+  FROM
+      [iot]
+  WHERE
+      device IS NOT NULL
+  GROUP 
+  
+  {"Device":"Device2","Kpi":90.76923076923077}
+  
+  
+device-errors:
+  SELECT
+      COUNT(deviceErrors) AS Count, device AS Device
+  INTO
+      [device-errors]
+  FROM
+      [iot]
+  WHERE
+      deviceErrors IS NOT NULL
+  GROUP BY
+      device, TumblingWindow(minute, 1);
 
-	{"device":"Device1","kpi":90.12345679012346}
+  {"Count":12,"Device":"Device2"}
